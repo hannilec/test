@@ -29,11 +29,6 @@ public class UITest {
         webDriver.get("file:///home/robak/Downloads/ui/index.html");
     }
 
-    @AfterEach
-    void removeCookies(){
-        webDriver.manage().deleteAllCookies();
-    }
-
     @ParameterizedTest(name = "As a user, I would like to search for a customer by {1}")
     @CsvSource({
             "Postimex, Name, 2",
@@ -57,7 +52,7 @@ public class UITest {
     @CsvSource({
             "melbourne, City",
             "alabaster, Name",
-            "BOND, Email"
+            "info@BOND.ir, Email"
     })
     public void testSearchWithMatchCaseNegative(String input, String type){
         CustomersPage customersPage = new CustomersPage(webDriver);
@@ -73,7 +68,7 @@ public class UITest {
     @CsvSource({
             "Postimex, Name"
     })
-    public void testClearFilers(String input, String type){
+    public void testClearFilters(String input, String type){
         CustomersPage customersPage = new CustomersPage(webDriver);
         int customersSize = customersPage.getVisibleCustomersAmount();
 
@@ -87,6 +82,7 @@ public class UITest {
         customersPage.clearFilters();
 
         assertEquals(customersSize, customersPage.getVisibleCustomersAmount());
+        assertFalse(customersPage.isClearFiltersButtonVisible());
 
     }
 
