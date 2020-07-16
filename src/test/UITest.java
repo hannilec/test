@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UITest {
     private static WebDriver webDriver;
+    private CustomersPage customersPage;
 
     @BeforeAll
     static void initTest(){
@@ -27,6 +28,7 @@ public class UITest {
     @BeforeEach
     void openWebsite(){
         webDriver.get("file:///home/robak/Downloads/ui/index.html");
+        customersPage = new CustomersPage(webDriver);
     }
 
     @ParameterizedTest(name = "As a user, I would like to search for a customer by {1}")
@@ -36,15 +38,14 @@ public class UITest {
             "melb, City, 1",
             "stime, Name, 2"
     })
-    public void testSearchPositive(String input, String type, int expected){
-        CustomersPage customersPage = new CustomersPage(webDriver);
-        int customersTotal = customersPage.getVisibleCustomersAmount();
+    public void testSearchPositive(String input, String type, int expectedCustomerId){
+        int customersTotalBeforeSearch = customersPage.getVisibleCustomersAmount();
 
         customersPage.searchBy(input, type);
 
-        assertEquals(customersPage.getVisibleCustomersAmount(), 1);
-        assertEquals(customersPage.getVisibleCustomers().get(0).getId(), expected);
-        assertEquals(customersPage.getTableResume(), "Showing 1 of "+customersTotal+" customers");
+        assertEquals(1, customersPage.getVisibleCustomersAmount());
+        assertEquals(expectedCustomerId, customersPage.getVisibleCustomers().get(0).getId());
+        assertEquals("Showing 1 of "+customersTotalBeforeSearch+" customers", customersPage.getTableResume());
 
     }
 
@@ -55,13 +56,12 @@ public class UITest {
             "info@BOND.ir, Email"
     })
     public void testSearchWithMatchCaseNegative(String input, String type){
-        CustomersPage customersPage = new CustomersPage(webDriver);
-        int customersTotal = customersPage.getVisibleCustomersAmount();
+        int customersTotalBeforeSearch = customersPage.getVisibleCustomersAmount();
 
         customersPage.searchByCaseSensitive(input, type);
 
-        assertEquals(customersPage.getVisibleCustomersAmount(), 0, "Too many search results visible, there shouldn't be any");
-        assertEquals(customersPage.getTableResume(), "Showing 0 of "+customersTotal+" customers");
+        assertEquals(0, customersPage.getVisibleCustomersAmount(),  "Too many search results visible, there shouldn't be any");
+        assertEquals("Showing 0 of "+customersTotalBeforeSearch+" customers", customersPage.getTableResume());
     }
 
     @ParameterizedTest(name = "As a user, I would like to clear search filters")
@@ -69,20 +69,19 @@ public class UITest {
             "Postimex, Name"
     })
     public void testClearFilters(String input, String type){
-        CustomersPage customersPage = new CustomersPage(webDriver);
-        int customersSize = customersPage.getVisibleCustomersAmount();
+        int customersTotalBeforeSearch = customersPage.getVisibleCustomersAmount();
 
-        assertFalse(customersPage.isClearFiltersButtonVisible());
+        assertFalse(customersPage.isClearFiltersButtonVisible(), "Clear Filters button visible");
 
         customersPage.searchBy(input, type);
 
-        assertTrue(customersPage.getVisibleCustomersAmount() < customersSize, "Search by "+type+" didn't work");
-        assertTrue(customersPage.isClearFiltersButtonVisible());
+        assertTrue(customersPage.getVisibleCustomersAmount() < customersTotalBeforeSearch, "Search by "+type+" didn't work");
+        assertTrue(customersPage.isClearFiltersButtonVisible(), "Clear Filters button not visible");
 
         customersPage.clearFilters();
 
-        assertEquals(customersSize, customersPage.getVisibleCustomersAmount());
-        assertFalse(customersPage.isClearFiltersButtonVisible());
+        assertEquals(customersTotalBeforeSearch, customersPage.getVisibleCustomersAmount());
+        assertFalse(customersPage.isClearFiltersButtonVisible(), "Clear Filters button visible");
 
     }
 
