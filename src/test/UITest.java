@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UITest {
     private static WebDriver webDriver;
     private CustomersPage customersPage;
+    int customersTotalBeforeSearch;
 
     @BeforeAll
     static void initTest(){
@@ -29,6 +30,7 @@ public class UITest {
     void openWebsite(){
         webDriver.get("file:///home/robak/Downloads/ui/index.html");
         customersPage = new CustomersPage(webDriver);
+        customersTotalBeforeSearch = customersPage.getVisibleCustomersAmount();
     }
 
     /*
@@ -42,7 +44,6 @@ public class UITest {
             "stime, Name, 2"
     })
     public void testSearchPositive(String input, String type, int expectedCustomerId){
-        int customersTotalBeforeSearch = customersPage.getVisibleCustomersAmount();
 
         customersPage.searchBy(input, type);
 
@@ -59,7 +60,6 @@ public class UITest {
             "info@BOND.ir, Email"
     })
     public void testSearchWithMatchCaseNegative(String input, String type){
-        int customersTotalBeforeSearch = customersPage.getVisibleCustomersAmount();
 
         customersPage.searchByCaseSensitive(input, type);
 
@@ -72,7 +72,6 @@ public class UITest {
             "Postimex, Name"
     })
     public void testClearFilters(String input, String type){
-        int customersTotalBeforeSearch = customersPage.getVisibleCustomersAmount();
 
         assertFalse(customersPage.isClearFiltersButtonVisible(), "Clear Filters button visible");
 
