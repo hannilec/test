@@ -31,6 +31,9 @@ public class UITest {
         customersPage = new CustomersPage(webDriver);
     }
 
+    /*
+        assuming there are known unique values in the test data set
+     */
     @ParameterizedTest(name = "As a user, I would like to search for a customer by {1}")
     @CsvSource({
             "Postimex, Name, 2",
