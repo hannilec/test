@@ -27,7 +27,7 @@ public class UITest {
     }
 
     @BeforeEach
-    void openWebsite(){
+    void openWebsiteAndCreatePageObject(){
         webDriver.get("file:///home/robak/Downloads/ui/index.html");
         customersPage = new CustomersPage(webDriver);
         customersTotalBeforeSearch = customersPage.getVisibleCustomersAmount();
